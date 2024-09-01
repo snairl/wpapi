@@ -41,4 +41,6 @@ using (var scope = app.Services.CreateScope())
     await mongoDbContext.CreateCollectionIfNotExists<User>();
 }
 
+app.UseResponseCaching();
+
 app.Run();

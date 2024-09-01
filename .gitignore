@@ -1,0 +1,8 @@
+API/bin/
+API/obj/
+data/
+Domain/obj/
+Infrastructure/bin/
+Infrastructure/obj/
+Domain/bin/
+.vs/

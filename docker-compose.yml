@@ -1,0 +1,25 @@
+services:
+  mongo:
+    image: mongo
+    container_name: mongodb
+    volumes:
+        - ./data:/data/db
+    ports:
+        - 27017:27017
+    restart: always  
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mystrongpassword
+      MONGO_INITDB_DATABASE: WPapi
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongoex
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: mystrongpassword
+      ME_CONFIG_MONGODB_URL: mongodb://root:mystrongpassword@mongo:27017
+      ME_CONFIG_BASICAUTH: false

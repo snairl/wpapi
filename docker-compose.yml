@@ -23,3 +23,12 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: mystrongpassword
       ME_CONFIG_MONGODB_URL: mongodb://root:mystrongpassword@mongo:27017
       ME_CONFIG_BASICAUTH: false
+
+  nodejs:
+     image: node:slim
+     container_name: nodejs
+     volumes:
+        - ./frontend:/app
+     ports:
+        - 3000:3000
+     tty: true  

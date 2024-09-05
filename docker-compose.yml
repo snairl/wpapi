@@ -32,3 +32,14 @@ services:
      ports:
         - 3000:3000
      tty: true  
+
+  net8:
+        image: mcr.microsoft.com/dotnet/sdk:8.0
+        container_name: net8
+        volumes:
+            - .:/app
+        ports:
+            - 5171:5171
+        tty: true
+        depends_on:
+            - mongo

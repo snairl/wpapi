@@ -12,9 +12,9 @@ namespace Infrastructure.Data
     {
         private readonly IMongoDatabase _database = null;
 
-        public MongoDbContext(IOptions<MongoDbSettings> settings)
+        public MongoDbContext(IMongoClient client, IOptions<MongoDbSettings> settings)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
+            //var client = new MongoClient(settings.Value.ConnectionString);
             if (client != null)
                 _database = client.GetDatabase(settings.Value.DatabaseName);
         }

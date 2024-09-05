@@ -28,14 +28,6 @@ namespace API.Extensions
                 return new MongoClient(settings.ConnectionString);
             });
 
-            services.AddScoped(serviceProvider =>
-            {
-                var client = serviceProvider.GetRequiredService<IMongoClient>();
-                var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-                var database = client.GetDatabase(settings.DatabaseName);
-                return database;
-            });
-
             services.AddScoped<MongoDbContext>();
 
             return services;

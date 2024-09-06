@@ -37,9 +37,9 @@ namespace Infrastructure.Data.Repositories
             return await _collection.Find(expression).FirstOrDefaultAsync(ct);
         }
 
-        public async Task<List<T>> ListAllAsync(Expression<Func<T, bool>> expression, CancellationToken ct)
+        public IQueryable<T> ListAll(Expression<Func<T, bool>> expression)
         {
-            return await _collection.AsQueryable().Where(expression).ToListAsync(ct);
+            return _collection.AsQueryable().Where(expression);
         }
 
         public async Task UpdateAsync(T entity, CancellationToken ct)

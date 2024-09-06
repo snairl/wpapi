@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Services.WordPress;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Categories;
 using Domain.Interfaces;
 using System.Reflection.Metadata;
@@ -24,54 +25,51 @@ namespace Application.Services.Categories
         }
 
 
-        public async Task<List<CategoryDTO>> GetCategoriesAsync(CancellationToken ct = default)
+        public IQueryable<CategoryDTO> GetCategories()
         {        
             var repository = _unitOfWork.Repository<Category>();
-            var categories = await repository.ListAllAsync(c => true, ct);
+            var categories = repository.ListAll(c => true);
 
             if (categories.Count() == 0)
             {
-                var wpCategories = await wpCategoryService.ListCategories(ct);
-                categories = mapper.Map<List<Category>>(wpCategories);
-                await repository.AddRangeAsync(categories, ct);
+                var wpCategories = wpCategoryService.ListCategories(default).Result;
+                var categoryEntities = mapper.Map<List<Category>>(wpCategories);
+                repository.AddRangeAsync(categoryEntities, default);
             }
-            return mapper.Map<List<CategoryDTO>>(categories);
+
+            return categories.ProjectTo<CategoryDTO>(mapper.ConfigurationProvider);
         }
 
-        public async Task<List<PostDTO>> GetPostsAsync(string categoryId, int page, CancellationToken ct = default)
+        public IQueryable<PostDTO> GetPosts(string categoryId, int page)
         {
             var categoryRepository = _unitOfWork.Repository<Category>();
-            var category = await categoryRepository.GetAsync(categoryId, ct);
+            var category = categoryRepository.GetAsync(categoryId, default).Result;
             var postRepository = _unitOfWork.Repository<Post>();
 
-            if (category == null)
+            if (category.IsExpired)
             {
-                return new List<PostDTO>();
-            }
-
-            if(category.IsExpired)
-            {
-                var wpCategory = await wpCategoryService.GetCategory(category.WordPress_Id, ct);
+                var wpCategory = wpCategoryService.GetCategory(category.WordPress_Id, default).Result;
                 var categoryEntity = mapper.Map<Category>(wpCategory);
-                if(!category.IsEqual(categoryEntity))
+                if (!category.IsEqual(categoryEntity))
                 {
                     category.Count = categoryEntity.Count;
-                    await postRepository.DeleteAllAsync(p => p.CategoryId == category.Id, ct);
+                    postRepository.DeleteAllAsync(p => p.CategoryId == category.Id, default);
                 }
                 category.UpdateExpireTime();
-                await categoryRepository.UpdateAsync(category, ct);
+                categoryRepository.UpdateAsync(category, default);
             }
 
-            var posts = await postRepository.ListAllAsync(p => p.CategoryId == category.Id && p.Page == page, ct);
-            if(posts.Count() == 0)
+            var posts = postRepository.ListAll(p => p.CategoryId == category.Id && p.Page == page);
+            if (posts.Count() == 0)
             {
-                var wpPosts = await wpPostService.ListPosts(category.WordPress_Id, page, ct);
-                posts = mapper.Map<List<Post>>(wpPosts);
-                posts.ForEach(p => {
+                var wpPosts = wpPostService.ListPosts(category.WordPress_Id, page, default).Result;
+                var postEntities = mapper.Map<List<Post>>(wpPosts);
+                postEntities.ForEach(p =>
+                {
                     p.CategoryId = category.Id;
                     p.Page = page;
                 });
-                await postRepository.AddRangeAsync(posts, ct);
+                postRepository.AddRangeAsync(postEntities, default);
                 //if (category.PostIds == null)
                 //{
                 //    category.PostIds = new List<string>();
@@ -79,9 +77,8 @@ namespace Application.Services.Categories
                 //category.PostIds.AddRange(posts.Select(p => p.Id));
                 //await categoryRepository.UpdateAsync(category, ct);
             }
-           
 
-            return mapper.Map<List<PostDTO>>(posts);
+            return posts.ProjectTo<PostDTO>(mapper.ConfigurationProvider);
         }
     }
 }

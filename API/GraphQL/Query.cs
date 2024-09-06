@@ -14,11 +14,13 @@ namespace API.GraphQL
         }
 
         [Authorize]
-        public async Task<IQueryable<CategoryDTO>> GetCategories() 
-            => (await categoryService.GetCategoriesAsync()).AsQueryable();
+        //No filtering or sorting is needed for this query as it is a simple list of categories
+        public IQueryable<CategoryDTO> GetCategories() 
+            => categoryService.GetCategories();
 
         [Authorize]
-        public async Task<IQueryable<PostDTO>> GetPosts(string categoryId, int page)
-            => (await categoryService.GetPostsAsync(categoryId, page)).AsQueryable();
+        //No filtering or sorting is needed for this query as it is a simple list of posts
+        public IQueryable<PostDTO> GetPosts(string categoryId, int page)
+            => categoryService.GetPosts(categoryId, page);
     }
 }

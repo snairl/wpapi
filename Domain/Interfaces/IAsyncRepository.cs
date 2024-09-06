@@ -13,7 +13,7 @@ namespace Domain.Interfaces
     {
         Task<T> GetAsync(string Id, CancellationToken ct);
         Task<T> GetAsync(Expression<Func<T, bool>> expression, CancellationToken ct);
-        Task<List<T>> ListAllAsync(Expression<Func<T, bool>> expression, CancellationToken ct);
+        IQueryable<T> ListAll(Expression<Func<T, bool>> expression);
         Task<T> AddAsync(T entity, CancellationToken ct);
         Task UpdateAsync(T entity, CancellationToken ct);
         Task DeleteAsync(string Id, CancellationToken ct);

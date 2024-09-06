@@ -4,7 +4,7 @@ namespace Application.Services.Categories
 {
     public interface ICategoryService
     {
-        public Task<List<CategoryDTO>> GetCategoriesAsync(CancellationToken ct = default);
-        public Task<List<PostDTO>> GetPostsAsync(string categoryId, int page, CancellationToken ct = default);
+        public IQueryable<CategoryDTO> GetCategories();
+        public IQueryable<PostDTO> GetPosts(string categoryId, int page);
     }
 }

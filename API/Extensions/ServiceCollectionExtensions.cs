@@ -110,11 +110,15 @@ namespace API.Extensions
                     .ForMember(d => d.Id, opt => opt.Ignore()) 
                     .ForMember(d => d.WordPress_Id, opt => opt.MapFrom(s => s.Id));
 
-                config.CreateMap<Post, Application.DTOs.PostDTO>()
+                config.CreateMap<Application.DTOs.WordPress.PostDTO, Post>()
+                    .ForMember(d => d.Id, opt => opt.Ignore())
                     .ReverseMap();
+
                 config.CreateMap<Application.DTOs.WordPress.PostDTO, Post>()
                     .ForMember(d => d.Id, opt => opt.Ignore())
                     .ForMember(d => d.WordPress_Id, opt => opt.MapFrom(s => s.Id));
+
+                config.CreateMap<Post, Application.DTOs.PostDTO>();
             });
 
             services.AddScoped<IMapper>(serviceProvider =>

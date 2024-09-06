@@ -32,7 +32,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(CancellationToken ct = default)
         {
-            var categories = await service.GetCategoriesAsync();
+            var categories = service.GetCategories();
             return Ok(categories);
         }
 
@@ -40,7 +40,7 @@ namespace API.Controllers
         [Route("posts/{categoryId}/{page}")]
         public async Task<IActionResult> GetPost([FromRoute]string categoryId, [FromRoute]int page, CancellationToken ct = default)
         {
-            var categories = await service.GetPostsAsync(categoryId, page, ct);
+            var categories = service.GetPosts(categoryId, page);
             return Ok(categories);
         }
 

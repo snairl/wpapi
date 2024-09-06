@@ -13,8 +13,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using System.Text;
-using Application.Services.Tokens;
+using API.Services.Tokens;
 using Application.Services.WordPress;
+using Domain.Users;
 
 namespace API.Extensions
 {
@@ -117,6 +118,9 @@ namespace API.Extensions
                 config.CreateMap<Application.DTOs.WordPress.PostDTO, Post>()
                     .ForMember(d => d.Id, opt => opt.Ignore())
                     .ForMember(d => d.WordPress_Id, opt => opt.MapFrom(s => s.Id));
+
+                config.CreateMap<User, UserDTO>()
+                    .ReverseMap();
 
                 config.CreateMap<Post, Application.DTOs.PostDTO>();
             });

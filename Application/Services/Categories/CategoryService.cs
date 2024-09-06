@@ -44,7 +44,14 @@ namespace Application.Services.Categories
         {
             var categoryRepository = _unitOfWork.Repository<Category>();
             var category = categoryRepository.GetAsync(categoryId, default).Result;
+            if(category == null)
+            {
+                return Enumerable.Empty<PostDTO>().AsQueryable();
+            }
+
             var postRepository = _unitOfWork.Repository<Post>();
+            var posts = postRepository.ListAll(p => p.CategoryId == categoryId && p.Page == page);
+
 
             if (category.IsExpired)
             {
@@ -59,7 +66,6 @@ namespace Application.Services.Categories
                 categoryRepository.UpdateAsync(category, default);
             }
 
-            var posts = postRepository.ListAll(p => p.CategoryId == category.Id && p.Page == page);
             if (posts.Count() == 0)
             {
                 var wpPosts = wpPostService.ListPosts(category.WordPress_Id, page, default).Result;

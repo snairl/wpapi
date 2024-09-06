@@ -1,8 +1,9 @@
-﻿using API.DTOs;
+﻿using Application.DTOs;
+using Application.Services.Tokens;
 using Domain.Interfaces;
 using Domain.Users;
 
-namespace API.Services.Users
+namespace Application.Services.Users
 {
     public class UserService : IUserService
     {

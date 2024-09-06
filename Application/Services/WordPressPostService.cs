@@ -1,7 +1,7 @@
-﻿using API.DTOs.WordPress;
+﻿using Application.DTOs.WordPress;
 using Newtonsoft.Json;
 
-namespace API.Services
+namespace Application.Services
 {
     public class WordPressPostService(string siteUrl) : BaseWordPressService<PostDTO>(siteUrl)
     {

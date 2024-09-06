@@ -1,6 +1,6 @@
-﻿using API.DTOs.WordPress;
+﻿using Application.DTOs.WordPress;
 
-namespace API.Services
+namespace Application.Services
 {
     public class WordPressCategoryService(string siteUrl) : BaseWordPressService<CategoryDTO>(siteUrl)
     {

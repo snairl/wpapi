@@ -6,3 +6,5 @@ Infrastructure/bin/
 Infrastructure/obj/
 Domain/bin/
 .vs/
+Application/obj/
+Application/bin/

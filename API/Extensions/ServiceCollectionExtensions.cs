@@ -1,8 +1,8 @@
-﻿using API.DTOs;
+﻿using Application.DTOs;
 using API.GraphQL;
-using API.Services;
-using API.Services.Categories;
-using API.Services.Users;
+using Application.Services;
+using Application.Services.Categories;
+using Application.Services.Users;
 using AutoMapper;
 using Domain.Categories;
 using Domain.Interfaces;
@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using System.Text;
+using Application.Services.Tokens;
 
 namespace API.Extensions
 {
@@ -103,15 +104,15 @@ namespace API.Extensions
         {
             var mapperConfig = new MapperConfiguration(config =>
             {
-                config.CreateMap<Category, DTOs.CategoryDTO>()
+                config.CreateMap<Category, Application.DTOs.CategoryDTO>()
                     .ReverseMap();
-                config.CreateMap<DTOs.WordPress.CategoryDTO, Category>()
+                config.CreateMap<Application.DTOs.WordPress.CategoryDTO, Category>()
                     .ForMember(d => d.Id, opt => opt.Ignore()) 
                     .ForMember(d => d.WordPress_Id, opt => opt.MapFrom(s => s.Id));
 
-                config.CreateMap<Post, DTOs.PostDTO>()
+                config.CreateMap<Post, Application.DTOs.PostDTO>()
                     .ReverseMap();
-                config.CreateMap<DTOs.WordPress.PostDTO, Post>()
+                config.CreateMap<Application.DTOs.WordPress.PostDTO, Post>()
                     .ForMember(d => d.Id, opt => opt.Ignore())
                     .ForMember(d => d.WordPress_Id, opt => opt.MapFrom(s => s.Id));
             });

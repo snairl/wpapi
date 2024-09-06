@@ -1,7 +1,7 @@
-using API.DTOs;
-using API.Services;
-using API.Services.Categories;
-using API.Services.Users;
+using Application.DTOs;
+using Application.Services;
+using Application.Services.Categories;
+using Application.Services.Users;
 using Domain.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

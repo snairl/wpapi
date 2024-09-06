@@ -1,4 +1,4 @@
-﻿namespace API.Services
+﻿namespace Application.Services.Tokens
 {
     public interface ITokenService
     {

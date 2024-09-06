@@ -1,6 +1,6 @@
-﻿using API.DTOs;
+﻿using Application.DTOs;
 
-namespace API.Services.Categories
+namespace Application.Services.Categories
 {
     public interface ICategoryService
     {

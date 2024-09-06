@@ -1,9 +1,9 @@
-﻿using API.DTOs.WordPress;
+﻿using Application.DTOs.WordPress;
 using Newtonsoft.Json;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
 
-namespace API.Services
+namespace Application.Services
 {
     public class BaseWordPressService <T> where T : BasedWordPressDTO
     {

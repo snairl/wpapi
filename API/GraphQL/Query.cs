@@ -1,5 +1,5 @@
-﻿using API.DTOs;
-using API.Services.Categories;
+﻿using Application.DTOs;
+using Application.Services.Categories;
 using HotChocolate.Authorization;
 
 namespace API.GraphQL

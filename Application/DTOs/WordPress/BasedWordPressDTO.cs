@@ -1,4 +1,4 @@
-﻿namespace API.DTOs.WordPress
+﻿namespace Application.DTOs.WordPress
 {
     public class BasedWordPressDTO
     {

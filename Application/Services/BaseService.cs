@@ -1,6 +1,6 @@
 ﻿using Domain.Interfaces;
 
-namespace API.Services
+namespace Application.Services
 {
     public class BaseService
     {

@@ -1,10 +1,10 @@
-﻿using API.DTOs;
+﻿using Application.DTOs;
 using AutoMapper;
 using Domain.Categories;
 using Domain.Interfaces;
 using System.Reflection.Metadata;
 
-namespace API.Services.Categories
+namespace Application.Services.Categories
 {
     public class CategoryService : BaseService, ICategoryService
     {

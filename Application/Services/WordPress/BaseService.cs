@@ -3,15 +3,15 @@ using Newtonsoft.Json;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
 
-namespace Application.Services
+namespace Application.Services.WordPress
 {
-    public class BaseWordPressService <T> where T : BasedWordPressDTO
+    public class BaseService<T> where T : BasedWordPressDTO
     {
         private readonly string _siteUrl;
 
-        public BaseWordPressService(string siteUrl)
+        public BaseService(string siteUrl)
         {
-            this._siteUrl = siteUrl;
+            _siteUrl = siteUrl;
         }
 
         private string buildEndpointUrl(string siteUrl, Dictionary<string, string> queryParams)

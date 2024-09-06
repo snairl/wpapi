@@ -1,8 +1,8 @@
 ﻿using Application.DTOs.WordPress;
 
-namespace Application.Services
+namespace Application.Services.WordPress
 {
-    public class WordPressCategoryService(string siteUrl) : BaseWordPressService<CategoryDTO>(siteUrl)
+    public class CategoryService(string siteUrl) : BaseService<CategoryDTO>(siteUrl)
     {
         private const string ENDPOINT = "wp-json/wp/v2/categories";
 

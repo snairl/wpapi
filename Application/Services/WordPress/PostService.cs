@@ -1,9 +1,9 @@
 ﻿using Application.DTOs.WordPress;
 using Newtonsoft.Json;
 
-namespace Application.Services
+namespace Application.Services.WordPress
 {
-    public class WordPressPostService(string siteUrl) : BaseWordPressService<PostDTO>(siteUrl)
+    public class PostService(string siteUrl) : BaseService<PostDTO>(siteUrl)
     {
         private const string ENDPOINT = "wp-json/wp/v2/posts";
 

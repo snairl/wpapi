@@ -1,6 +1,5 @@
 ﻿using Application.DTOs;
 using API.GraphQL;
-using Application.Services;
 using Application.Services.Categories;
 using Application.Services.Users;
 using AutoMapper;
@@ -15,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using System.Text;
 using Application.Services.Tokens;
+using Application.Services.WordPress;
 
 namespace API.Extensions
 {
@@ -76,17 +76,17 @@ namespace API.Extensions
                 throw new ArgumentNullException("WordPressSiteUrl is required");
             }
 
-            services.AddScoped<WordPressCategoryService>(serviceProvider =>
+            services.AddScoped(serviceProvider =>
             {
-                return new WordPressCategoryService(siteUrl);
+                return new Application.Services.WordPress.CategoryService(siteUrl);
             });
-            services.AddScoped<WordPressPostService>(serviceProvider =>
+            services.AddScoped<PostService>(serviceProvider =>
             {
-                return new WordPressPostService(siteUrl);
+                return new PostService(siteUrl);
             });
             services.Configure<JwtTokenSettings>(configuration.GetSection("JwtSettings"));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ICategoryService, Application.Services.Categories.CategoryService>();
             services.AddScoped<IUserService, UserService>();
             return services;
         }

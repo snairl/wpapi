@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.Services.WordPress;
 using AutoMapper;
 using Domain.Categories;
 using Domain.Interfaces;
@@ -8,13 +9,13 @@ namespace Application.Services.Categories
 {
     public class CategoryService : BaseService, ICategoryService
     {
-        private readonly WordPressCategoryService wpCategoryService;
-        private readonly WordPressPostService wpPostService;
+        private readonly WordPress.CategoryService wpCategoryService;
+        private readonly PostService wpPostService;
         private readonly IMapper mapper;
 
         public CategoryService(IUnitOfWork unitOfWork,
-            WordPressCategoryService wpCategoryService,
-            WordPressPostService wpPostService,
+            WordPress.CategoryService wpCategoryService,
+            PostService wpPostService,
             IMapper mapper) : base(unitOfWork)
         {
             this.wpCategoryService = wpCategoryService;

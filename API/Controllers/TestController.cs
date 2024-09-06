@@ -1,7 +1,7 @@
 using Application.DTOs;
-using Application.Services;
 using Application.Services.Categories;
 using Application.Services.Users;
+using Application.Services.WordPress;
 using Domain.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +15,12 @@ namespace API.Controllers
 
         private readonly ILogger<TestController> _logger;
         private readonly ICategoryService service;
-        private readonly WordPressPostService postService;
+        private readonly PostService postService;
         private readonly IUserService userService;
 
         public TestController(ILogger<TestController> logger,
             ICategoryService service,
-            WordPressPostService postService,
+            PostService postService,
             IUserService userService)
         {
             _logger = logger;

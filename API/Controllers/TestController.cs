@@ -1,3 +1,4 @@
+using API.DTOs;
 using Application.DTOs;
 using Application.Services.Categories;
 using Application.Services.Users;

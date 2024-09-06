@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Application.Services.Tokens
+namespace API.Services.Tokens
 {
     public class JwtTokenService : ITokenService
     {
@@ -17,7 +17,7 @@ namespace Application.Services.Tokens
             this.settings = settings.Value;
         }
 
-        public string GenerateTokenAsync(string username)
+        public string GenerateToken(string username)
         {
             var claims = new[]
         {

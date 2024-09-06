@@ -10,6 +10,6 @@ namespace Application.Services.Users
 {
     public interface IUserService
     {
-        Task<LoggedDTO?> LoginAsync(string username, string password, CancellationToken ct);
+        Task<UserDTO?> LoginAsync(string username, string password, CancellationToken ct);
     }
 }

@@ -15,11 +15,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #000;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #646cff;
 }
 
 body {
@@ -31,7 +31,7 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2em;
   line-height: 1.1;
 }
 
@@ -54,6 +54,21 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+ul.posts {
+  list-style-type: none;
+  padding: 0;
+  text-align: left;
+}
+
+ul.posts a{
+  display: block;
+  margin-top: 1.1em;
+}
+
+ul.posts small{
+  display: block;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -63,6 +78,6 @@ button:focus-visible {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #4b7eeb;
   }
 }

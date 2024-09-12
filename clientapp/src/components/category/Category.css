@@ -1,0 +1,26 @@
+.container {
+    width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  

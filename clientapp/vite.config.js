@@ -11,6 +11,11 @@ export default defineConfig({
         target: 'http://net8:5171',
         // changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/graphql': {
+        target: 'http://net8:5171',
+        // changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, '')
       }
     },
     watch: {

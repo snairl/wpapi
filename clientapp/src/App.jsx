@@ -1,8 +1,10 @@
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
+
 import "./App.css"
 import Login from "./components/login/Login"
 import Dashboard from "./components/dashboard/Dashboard";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import Category from "./components/category/Category";
 
 const PrivateRoute = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
@@ -19,7 +21,7 @@ function App() {
       {/* Public route for login */}
       <Route
         path="/login"
-        element={token ? <Navigate to="/dashboard" /> : <Login />}
+        element={token ? <Navigate to="/category" /> : <Login />}
       />
 
       {/* Protected route for dashboard */}
@@ -28,6 +30,15 @@ function App() {
         element={
           <PrivateRoute>
             <Dashboard />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/category"
+        element={
+          <PrivateRoute>
+            <Category />
           </PrivateRoute>
         }
       />

@@ -24,8 +24,23 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:mystrongpassword@mongo:27017
       ME_CONFIG_BASICAUTH: false
 
+  net8:
+        # image: mcr.microsoft.com/dotnet/sdk:8.0
+        build:
+          context: ./backend
+        container_name: net8
+        # volumes:
+            # - .:/app
+        ports:
+            - 5171:5171
+        # tty: true
+        depends_on:
+            - mongo
+
   nodejs:
-     image: node:slim
+     # image: node:slim
+     build:
+        context: ./clientapp
      container_name: nodejs
      volumes:
         - ./clientapp:/app
@@ -34,14 +49,3 @@ services:
      tty: true  
      depends_on:
         - net8
-
-  net8:
-        image: mcr.microsoft.com/dotnet/sdk:8.0
-        container_name: net8
-        volumes:
-            - .:/app
-        ports:
-            - 5171:5171
-        tty: true
-        depends_on:
-            - mongo

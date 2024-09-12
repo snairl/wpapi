@@ -1,18 +1,22 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginStart, loginSuccess, loginFailure } from "../../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 import './Login.css';
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  // const [error, setError] = useState("");
+  // const [loading, setLoading] = useState(false);
+  // const [success, setSuccess] = useState(false);
+
+  const dispatch = useDispatch();
+  const { loading, error, user } = useSelector((state) => state.auth);
 
   // Function to handle login API call
   const authenticateUser = async () => {
-    setLoading(true);
-    setError("");
-    setSuccess(false);
+    dispatch(loginStart());  // Dispatch the loginStart action
 
     try {
       const response = await fetch("/api/login", {
@@ -26,19 +30,16 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Handle successful authentication (e.g., store token, redirect)
-        setSuccess(true);
+        // Dispatch loginSuccess if API call succeeds
+        dispatch(loginSuccess({ user: data.user, token: data.token }));
         console.log("Login successful:", data);
-        // For example: localStorage.setItem("token", data.token);
+        navigate("/dashboard");
       } else {
-        // Handle errors (e.g., invalid credentials)
-        setError(data.message || "Invalid username or password");
+        // Dispatch loginFailure if login fails
+        dispatch(loginFailure(data.message || "Invalid credentials"));
       }
-    } catch (error) {
-      // Handle network errors
-      setError("Something went wrong. Please try again later.");
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      dispatch(loginFailure("Something went wrong. Please try again."));
     }
   };
 
@@ -47,11 +48,12 @@ const Login = () => {
 
     // Basic validation
     if (username === "" || password === "") {
-      setError("Both fields are required.");
+      dispatch(loginFailure("Both fields are required."));
       return;
     }
 
     // Call the authenticate function
+    //TODO move in a separate function ???
     authenticateUser();
   };
 
@@ -84,7 +86,6 @@ const Login = () => {
         </div>
 
         {error && <p className="error">{error}</p>}
-        {success && <p className="success">Login successful!</p>}
 
         <button type="submit" className="button" disabled={loading}>
           {loading ? "Logging in..." : "Login"}

@@ -25,7 +25,7 @@ namespace API.Controllers
             var userDto = await userService.LoginAsync(login.Username, login.Password, ct);
             if (userDto == null)
             {
-                return Unauthorized();
+                return BadRequest("Invalid username or password");
             }
             var token = tokenService.GenerateToken(userDto.Username);
             return Ok(new LoggedDTO

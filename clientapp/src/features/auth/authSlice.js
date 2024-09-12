@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 // Define the initial state of the auth
 const initialState = {
@@ -10,7 +10,7 @@ const initialState = {
 
 // Create a slice for authentication
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     loginStart: (state) => {
@@ -22,7 +22,7 @@ const authSlice = createSlice({
       state.error = null;
       state.user = action.payload.user;
       state.token = action.payload.token;
-      localStorage.setItem('token', action.payload.token);
+      localStorage.setItem("token", action.payload.token);
     },
     loginFailure: (state, action) => {
       state.loading = false;
@@ -32,7 +32,7 @@ const authSlice = createSlice({
       state.user = null;
       state.error = null;
       state.token = null;
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
     },
   },
 });

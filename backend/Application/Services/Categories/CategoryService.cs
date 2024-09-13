@@ -55,7 +55,7 @@ namespace Application.Services.Categories
             var categoryEntity = mapper.Map<Category>(wpCategory);
             if (!category.IsEqual(categoryEntity))
             {
-                category.Count = categoryEntity.Count
+                category.Count = categoryEntity.Count;
                 await postRepository.DeleteAllAsync(p => p.CategoryId == category.Id, default);
             }
             category.UpdateExpireTime();

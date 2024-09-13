@@ -89,6 +89,7 @@ namespace API.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICategoryService, Application.Services.Categories.CategoryService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ILockService, Application.Services.MongoDb.LockService>();
             return services;
         }
 

@@ -23,6 +23,7 @@ namespace Infrastructure.Data.Repositories
 
         public async Task<T> AddAsync(T entity, CancellationToken ct)
         {
+
             await _collection.InsertOneAsync(entity, cancellationToken: ct);
             return entity;
         }

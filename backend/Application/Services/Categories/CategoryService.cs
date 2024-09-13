@@ -10,18 +10,23 @@ namespace Application.Services.Categories
 {
     public class CategoryService : BaseService, ICategoryService
     {
+        private readonly IUnitOfWork unitOfWork;
         private readonly WordPress.CategoryService wpCategoryService;
         private readonly PostService wpPostService;
         private readonly IMapper mapper;
+        private readonly ILockService lockService;
 
         public CategoryService(IUnitOfWork unitOfWork,
             WordPress.CategoryService wpCategoryService,
             PostService wpPostService,
-            IMapper mapper) : base(unitOfWork)
+            IMapper mapper,
+            ILockService lockService) : base(unitOfWork)
         {
+            this.unitOfWork = unitOfWork;
             this.wpCategoryService = wpCategoryService;
             this.wpPostService = wpPostService;
             this.mapper = mapper;
+            this.lockService = lockService;
         }
 
 
@@ -53,8 +58,9 @@ namespace Application.Services.Categories
             var posts = postRepository.ListAll(p => p.CategoryId == categoryId && p.Page == page);
 
 
-            if (category.IsExpired)
+            if (!lockService.IsLockedAsync(category.Id).Result && category.IsExpired)
             {
+                lockService.LockAsync(category.Id, TimeSpan.FromSeconds(3));
                 var wpCategory = wpCategoryService.GetCategory(category.WordPress_Id, default).Result;
                 var categoryEntity = mapper.Map<Category>(wpCategory);
                 if (!category.IsEqual(categoryEntity))
@@ -64,6 +70,7 @@ namespace Application.Services.Categories
                 }
                 category.UpdateExpireTime();
                 categoryRepository.UpdateAsync(category, default);
+                lockService.ReleaseLockAsync(category.Id);
             }
 
             if (posts.Count() == 0)

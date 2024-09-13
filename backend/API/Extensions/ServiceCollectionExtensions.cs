@@ -16,6 +16,7 @@ using System.Text;
 using API.Services.Tokens;
 using Application.Services.WordPress;
 using Domain.Users;
+using Application.Services.MongoDb;
 
 namespace API.Extensions
 {
@@ -89,7 +90,7 @@ namespace API.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICategoryService, Application.Services.Categories.CategoryService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ILockService, Application.Services.MongoDb.LockService>();
+            services.AddScoped<ILockService, LockService>();
             return services;
         }
 

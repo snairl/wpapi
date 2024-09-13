@@ -10,11 +10,13 @@ namespace Application.Services.Categories
 {
     public class CategoryService : BaseService, ICategoryService
     {
-        private readonly IUnitOfWork unitOfWork;
         private readonly WordPress.CategoryService wpCategoryService;
         private readonly PostService wpPostService;
         private readonly IMapper mapper;
         private readonly ILockService lockService;
+
+        private readonly IAsyncRepository<Category> categoryRepository;
+        private readonly IAsyncRepository<Post> postRepository;
 
         public CategoryService(IUnitOfWork unitOfWork,
             WordPress.CategoryService wpCategoryService,
@@ -22,11 +24,13 @@ namespace Application.Services.Categories
             IMapper mapper,
             ILockService lockService) : base(unitOfWork)
         {
-            this.unitOfWork = unitOfWork;
             this.wpCategoryService = wpCategoryService;
             this.wpPostService = wpPostService;
             this.mapper = mapper;
             this.lockService = lockService;
+
+            categoryRepository = unitOfWork.Repository<Category>();
+            postRepository = unitOfWork.Repository<Post>();
         }
 
 
@@ -45,50 +49,64 @@ namespace Application.Services.Categories
             return categories.ProjectTo<CategoryDTO>(mapper.ConfigurationProvider);
         }
 
+        private async Task UpdateCategory(Category category)
+        { 
+            var wpCategory = await wpCategoryService.GetCategory(category.WordPress_Id, default);
+            var categoryEntity = mapper.Map<Category>(wpCategory);
+            if (!category.IsEqual(categoryEntity))
+            {
+                category.Count = categoryEntity.Count
+                await postRepository.DeleteAllAsync(p => p.CategoryId == category.Id, default);
+            }
+            category.UpdateExpireTime();
+            await categoryRepository.UpdateAsync(category, default);
+        }
+
+        private async Task UpdatePosts(Category category, int page)
+        {
+            var wpPosts = wpPostService.ListPosts(category.WordPress_Id, page, default).Result;
+            var postEntities = mapper.Map<List<Post>>(wpPosts);
+            postEntities.ForEach(p =>
+            {
+                p.CategoryId = category.Id;
+                p.Page = page;
+            });
+            await postRepository.AddRangeAsync(postEntities, default);
+        }
+
         public IQueryable<PostDTO> GetPosts(string categoryId, int page)
         {
-            var categoryRepository = _unitOfWork.Repository<Category>();
             var category = categoryRepository.GetAsync(categoryId, default).Result;
             if(category == null)
             {
                 return Enumerable.Empty<PostDTO>().AsQueryable();
             }
 
-            var postRepository = _unitOfWork.Repository<Post>();
-            var posts = postRepository.ListAll(p => p.CategoryId == categoryId && p.Page == page);
-
-
-            if (!lockService.IsLockedAsync(category.Id).Result && category.IsExpired)
+            var categoryLockKey = category.Id;
+            if (category.IsExpired && !lockService.IsLockedAsync(categoryLockKey).Result)
             {
-                lockService.LockAsync(category.Id, TimeSpan.FromSeconds(3));
-                var wpCategory = wpCategoryService.GetCategory(category.WordPress_Id, default).Result;
-                var categoryEntity = mapper.Map<Category>(wpCategory);
-                if (!category.IsEqual(categoryEntity))
-                {
-                    category.Count = categoryEntity.Count;
-                    postRepository.DeleteAllAsync(p => p.CategoryId == category.Id, default);
-                }
-                category.UpdateExpireTime();
-                categoryRepository.UpdateAsync(category, default);
-                lockService.ReleaseLockAsync(category.Id);
+                lockService.LockAsync(categoryLockKey).Wait();
+                UpdateCategory(category).Wait();
+                lockService.ReleaseLockAsync(categoryLockKey).Wait();
+            }
+            else
+            {
+                //Someone else is updating that category wait for it to finish
+                lockService.WaitForLockToBeReleased(categoryLockKey).Wait();
             }
 
-            if (posts.Count() == 0)
+            var posts = postRepository.ListAll(p => p.CategoryId == categoryId && p.Page == page);
+            var postLock = $"{categoryId}-{page}";
+            if (posts.Count() == 0 && !lockService.IsLockedAsync(postLock).Result)
             {
-                var wpPosts = wpPostService.ListPosts(category.WordPress_Id, page, default).Result;
-                var postEntities = mapper.Map<List<Post>>(wpPosts);
-                postEntities.ForEach(p =>
-                {
-                    p.CategoryId = category.Id;
-                    p.Page = page;
-                });
-                postRepository.AddRangeAsync(postEntities, default);
-                //if (category.PostIds == null)
-                //{
-                //    category.PostIds = new List<string>();
-                //}
-                //category.PostIds.AddRange(posts.Select(p => p.Id));
-                //await categoryRepository.UpdateAsync(category, ct);
+                lockService.LockAsync(postLock).Wait();
+                UpdatePosts(category, page).Wait();
+                lockService.ReleaseLockAsync(postLock).Wait();
+            }
+            else
+            {
+                //Someone else is updating that category posts just wait for it to finish
+                lockService.WaitForLockToBeReleased(postLock).Wait();
             }
 
             return posts.ProjectTo<PostDTO>(mapper.ConfigurationProvider);

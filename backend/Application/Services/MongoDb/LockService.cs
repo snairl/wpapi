@@ -1,17 +1,21 @@
 ﻿using Domain.Interfaces;
 using Infrastructure.Data;
 using MongoDB.Driver;
+using System.Threading;
 
 namespace Application.Services.MongoDb
 {
     public class LockResource
     {
         public string Id { get; set; }
+        public DateTime AcuqiredAt { get; set; }
         public DateTime ExpireAt { get; set; }
     }
 
     public class LockService : ILockService
     {
+        private const int EXPIRE_PERIOD = 3000;
+        private const int POLL_PERIOD = 300;
         private readonly IMongoCollection<LockResource> _collection;
 
         public LockService(MongoDbContext context)
@@ -35,12 +39,13 @@ namespace Application.Services.MongoDb
             return true;
         }
 
-        public async Task LockAsync(string key, TimeSpan expiry)
+        public async Task LockAsync(string key)
         {
             var lockResource = new LockResource
             {
                 Id = key,
-                ExpireAt = DateTime.UtcNow.Add(expiry)
+                AcuqiredAt = DateTime.UtcNow,
+                ExpireAt = DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(EXPIRE_PERIOD))
             };
 
             await _collection.InsertOneAsync(lockResource);
@@ -51,6 +56,27 @@ namespace Application.Services.MongoDb
             var filter = Builders<LockResource>.Filter.Eq(doc => doc.Id, key);
             await _collection.DeleteOneAsync(filter);
             return true;
+        }
+
+        public async Task WaitForLockToBeReleased(string key)
+        {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var timeout = TimeSpan.FromMilliseconds(EXPIRE_PERIOD);
+            var pollInterval = TimeSpan.FromMilliseconds(POLL_PERIOD);
+
+            while (stopwatch.Elapsed < timeout)
+            {
+                bool isLocked = await IsLockedAsync(key);
+
+                if (!isLocked)
+                {
+                    return;
+                }
+
+                await Task.Delay(pollInterval);
+            }
+
+            throw new TimeoutException($"Failed to acquire lock for {key} within the timeout period.");
         }
     }
 }
